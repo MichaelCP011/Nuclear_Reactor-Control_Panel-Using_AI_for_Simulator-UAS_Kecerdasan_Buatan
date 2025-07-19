@@ -45,7 +45,7 @@ class ReactorSimulator:
 
         # 3. Hitung perubahan suhu berdasarkan daya dan pendinginan
         # Panas yang dihasilkan oleh reaktor akan menaikkan suhu
-        heat_generated = self.reactor_power * 0.1
+        heat_generated = self.reactor_power * 0.15
         
         # Sistem pendingin selalu mencoba mendinginkan sistem
         cooling_loss = self.COOLING_EFFECT * (self.coolant_temp - 25) # Asumsi suhu luar 25 C
