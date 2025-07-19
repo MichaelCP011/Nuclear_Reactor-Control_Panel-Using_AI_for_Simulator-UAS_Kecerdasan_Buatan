@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLTN Control Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 font-sans">
+
+    <div class="flex h-screen">
+
+        <nav class="w-20 bg-gray-800 p-4 flex flex-col items-center space-y-6">
+            <div class="p-2 bg-blue-600 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+            </div>
+            
+            <div class="flex flex-col space-y-4">
+                <a href="#" class="p-3 bg-gray-700 rounded-lg hover:bg-blue-500" title="Resources">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                </a>
+                <a href="#" class="p-3 bg-gray-700 rounded-lg hover:bg-blue-500" title="Control">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m12 0a2 2 0 100-4m0 4a2 2 0 110-4m-6 0a2 2 0 100-4m0 4a2 2 0 110-4" />
+                    </svg>
+                </a>
+                <a href="#" class="p-3 bg-gray-700 rounded-lg hover:bg-blue-500" title="Analytics">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                    </svg>
+                </a>
+            </div>
+        </nav>
+        <main class="flex-1 p-8 overflow-y-auto">
+            <h1 class="text-3xl font-bold mb-8">Dashboard Analytics</h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h2 class="text-sm font-medium text-gray-400">Power Output</h2>
+                    <p id="power-output" class="text-3xl font-bold mt-2">-- MW</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h2 class="text-sm font-medium text-gray-400">Reactor Temperature</h2>
+                    <p id="reactor-temp" class="text-3xl font-bold mt-2">-- °C</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h2 class="text-sm font-medium text-gray-400">System Pressure</h2>
+                    <p id="system-pressure" class="text-3xl font-bold mt-2">-- bar</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h2 class="text-sm font-medium text-gray-400">Control Rod Position</h2>
+                    <p id="rod-position" class="text-3xl font-bold mt-2">-- %</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 bg-gray-800 p-6 rounded-lg">
+                <h2 class="text-xl font-bold mb-4">Temperature & Power History</h2>
+                <div id="chart-container" class="h-80 bg-gray-700 rounded">
+                    </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function updateDashboard() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+
+                document.getElementById('power-output').innerText = `${data.reactor_power_percent.toFixed(2)} MW`;
+                document.getElementById('reactor-temp').innerText = `${data.coolant_temp_celsius.toFixed(2)} °C`;
+                document.getElementById('system-pressure').innerText = `${data.system_pressure_bar.toFixed(2)} bar`;
+                document.getElementById('rod-position').innerText = `${data.rod_position.toFixed(2)} %`;
+
+            } catch (error) {
+                console.error('Gagal mengambil data:', error);
+            }
+        }
+        setInterval(updateDashboard, 1000);
+        updateDashboard();
+    </script>
+
+</body>
+</html>
