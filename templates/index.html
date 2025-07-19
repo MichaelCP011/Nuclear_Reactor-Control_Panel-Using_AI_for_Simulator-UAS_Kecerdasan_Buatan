@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PLTN Control Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <style>
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #1f2937; }
@@ -13,83 +14,115 @@
     </style>
 </head>
 <body class="bg-gray-900 text-gray-200 font-sans">
-
     <div class="flex h-screen">
-
         <nav class="w-20 bg-gray-800 p-4 flex flex-col items-center space-y-6">
-            <div class="p-2 bg-blue-600 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-            </div>
-            
+            <div class="p-2 bg-blue-600 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg></div>
             <div class="flex flex-col space-y-4">
-                <a href="#" class="p-3 bg-gray-700 rounded-lg hover:bg-blue-500" title="Resources">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                    </svg>
-                </a>
-                <a href="#" class="p-3 bg-gray-700 rounded-lg hover:bg-blue-500" title="Control">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m12 0a2 2 0 100-4m0 4a2 2 0 110-4m-6 0a2 2 0 100-4m0 4a2 2 0 110-4" />
-                    </svg>
-                </a>
-                <a href="#" class="p-3 bg-gray-700 rounded-lg hover:bg-blue-500" title="Analytics">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-                    </svg>
-                </a>
+                <a href="#" class="p-3 bg-gray-700 rounded-lg hover:bg-blue-500" title="Resources"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg></a>
+                <a href="#" class="p-3 bg-gray-700 rounded-lg hover:bg-blue-500" title="Control"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m12 0a2 2 0 100-4m0 4a2 2 0 110-4m-6 0a2 2 0 100-4m0 4a2 2 0 110-4" /></svg></a>
+                <a href="#" class="p-3 bg-gray-700 rounded-lg hover:bg-blue-500" title="Analytics"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg></a>
             </div>
         </nav>
+
         <main class="flex-1 p-8 overflow-y-auto">
             <h1 class="text-3xl font-bold mb-8">Dashboard Analytics</h1>
-            
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                
-                <div class="bg-gray-800 p-6 rounded-lg">
-                    <h2 class="text-sm font-medium text-gray-400">Power Output</h2>
-                    <p id="power-output" class="text-3xl font-bold mt-2">-- MW</p>
-                </div>
-                <div class="bg-gray-800 p-6 rounded-lg">
-                    <h2 class="text-sm font-medium text-gray-400">Reactor Temperature</h2>
-                    <p id="reactor-temp" class="text-3xl font-bold mt-2">-- °C</p>
-                </div>
-                <div class="bg-gray-800 p-6 rounded-lg">
-                    <h2 class="text-sm font-medium text-gray-400">System Pressure</h2>
-                    <p id="system-pressure" class="text-3xl font-bold mt-2">-- bar</p>
-                </div>
-                <div class="bg-gray-800 p-6 rounded-lg">
-                    <h2 class="text-sm font-medium text-gray-400">Control Rod Position</h2>
-                    <p id="rod-position" class="text-3xl font-bold mt-2">-- %</p>
-                </div>
+                <div class="bg-gray-800 p-6 rounded-lg"><h2 class="text-sm font-medium text-gray-400">Power Output</h2><p id="power-output" class="text-3xl font-bold mt-2">-- MW</p></div>
+                <div class="bg-gray-800 p-6 rounded-lg"><h2 class="text-sm font-medium text-gray-400">Reactor Temperature</h2><p id="reactor-temp" class="text-3xl font-bold mt-2">-- °C</p></div>
+                <div class="bg-gray-800 p-6 rounded-lg"><h2 class="text-sm font-medium text-gray-400">System Pressure</h2><p id="system-pressure" class="text-3xl font-bold mt-2">-- bar</p></div>
+                <div class="bg-gray-800 p-6 rounded-lg"><h2 class="text-sm font-medium text-gray-400">Neutron Flux</h2><p id="neutron-flux" class="text-3xl font-bold mt-2">--</p></div>
             </div>
             
-            <div class="mt-8 bg-gray-800 p-6 rounded-lg">
-                <h2 class="text-xl font-bold mb-4">Temperature & Power History</h2>
-                <div id="chart-container" class="h-80 bg-gray-700 rounded">
-                    </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h2 class="text-xl font-bold mb-4">Temperature History</h2>
+                    <div id="temp-chart" class="h-64"></div>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h2 class="text-xl font-bold mb-4">Power History</h2>
+                    <div id="power-chart" class="h-64"></div>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h2 class="text-xl font-bold mb-4">Neutron Flux History</h2>
+                    <div id="flux-chart" class="h-64"></div>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h2 class="text-xl font-bold mb-4">Control Rod Position History</h2>
+                    <div id="rod-chart" class="h-64"></div>
+                </div>
             </div>
         </main>
     </div>
 
     <script>
+        // --- Inisialisasi ---
+        let dataHistory = { time: [], temperature: [], power: [], rod_position: [], neutron_flux: [] };
+        const MAX_DATA_POINTS = 60;
+
+        // Fungsi bantuan untuk membuat opsi grafik agar tidak berulang
+        function createChartOptions(name, color) {
+            return {
+                series: [{ name: name, data: [] }],
+                chart: { type: 'line', height: 250, animations: { easing: 'linear', dynamicAnimation: { speed: 1000 } }, toolbar: { show: false }, background: 'transparent' },
+                xaxis: { type: 'datetime', labels: { style: { colors: '#9CA3AF' } } },
+                yaxis: { labels: { style: { colors: '#9CA3AF' }, formatter: (val) => val.toFixed(2) } },
+                stroke: { curve: 'smooth', width: 2 },
+                tooltip: { theme: 'dark' },
+                grid: { borderColor: '#374151' },
+                colors: [color]
+            };
+        }
+
+        // Membuat 4 instance grafik yang berbeda
+        var tempChart = new ApexCharts(document.querySelector("#temp-chart"), createChartOptions('Temperature (°C)', '#3B82F6'));
+        var powerChart = new ApexCharts(document.querySelector("#power-chart"), createChartOptions('Power (%)', '#F59E0B'));
+        var fluxChart = new ApexCharts(document.querySelector("#flux-chart"), createChartOptions('Neutron Flux', '#10B981'));
+        var rodChart = new ApexCharts(document.querySelector("#rod-chart"), createChartOptions('Rod Position (%)', '#EF4444'));
+
+        // Merender semua grafik
+        tempChart.render();
+        powerChart.render();
+        fluxChart.render();
+        rodChart.render();
+
+        // --- Fungsi Update ---
         async function updateDashboard() {
             try {
                 const response = await fetch('/api/status');
                 const data = await response.json();
 
+                // Update kartu data
                 document.getElementById('power-output').innerText = `${data.reactor_power_percent.toFixed(2)} MW`;
                 document.getElementById('reactor-temp').innerText = `${data.coolant_temp_celsius.toFixed(2)} °C`;
                 document.getElementById('system-pressure').innerText = `${data.system_pressure_bar.toFixed(2)} bar`;
-                document.getElementById('rod-position').innerText = `${data.rod_position.toFixed(2)} %`;
+                document.getElementById('neutron-flux').innerText = `${(data.neutron_flux / 1e13).toExponential(2)}`;
+
+                // Tambah data baru ke histori
+                const currentTime = data.timestamp * 1000;
+                dataHistory.time.push(currentTime);
+                dataHistory.temperature.push(data.coolant_temp_celsius.toFixed(2));
+                dataHistory.power.push(data.reactor_power_percent.toFixed(2));
+                dataHistory.neutron_flux.push(data.neutron_flux);
+                dataHistory.rod_position.push(data.rod_position.toFixed(2));
+                
+                // Jaga agar data tidak terlalu banyak
+                if (dataHistory.time.length > MAX_DATA_POINTS) {
+                    Object.keys(dataHistory).forEach(key => dataHistory[key].shift());
+                }
+
+                // Perbarui setiap grafik dengan data yang sesuai
+                tempChart.updateSeries([{ data: dataHistory.temperature.map((val, i) => [dataHistory.time[i], val]) }]);
+                powerChart.updateSeries([{ data: dataHistory.power.map((val, i) => [dataHistory.time[i], val]) }]);
+                fluxChart.updateSeries([{ data: dataHistory.neutron_flux.map((val, i) => [dataHistory.time[i], val]) }]);
+                rodChart.updateSeries([{ data: dataHistory.rod_position.map((val, i) => [dataHistory.time[i], val]) }]);
 
             } catch (error) {
                 console.error('Gagal mengambil data:', error);
             }
         }
+
         setInterval(updateDashboard, 1000);
         updateDashboard();
     </script>
-
 </body>
 </html>

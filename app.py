@@ -1,42 +1,49 @@
 # app.py
 
-from flask import Flask, render_template, jsonify
+# Tambahkan 'request' ke baris import Anda
+from flask import Flask, render_template, jsonify, request
 from simulator import ReactorSimulator
 import threading
 import time
 
-# Inisialisasi aplikasi Flask
 app = Flask(__name__)
-
-# Buat satu objek simulator global agar statusnya terus berjalan
 simulator = ReactorSimulator()
 
 def run_simulation_background():
-    """Fungsi untuk menjalankan simulasi di thread terpisah."""
+    # ... (Fungsi ini tidak berubah) ...
     while True:
         simulator.step()
-        # Anda bisa menambahkan logika kontrol (PID atau RL) di sini nanti
-        time.sleep(1) # Simulasi berjalan setiap 1 detik
+        time.sleep(1)
 
 @app.route('/')
 def dashboard_page():
-    """Menampilkan halaman dashboard utama (index.html)."""
+    # ... (Fungsi ini tidak berubah) ...
     return render_template('index.html')
 
-# === INI BAGIAN BARUNYA ===
 @app.route('/api/status')
 def get_status():
-    """Ini adalah API endpoint kita. Mengembalikan status reaktor sebagai JSON."""
+    # ... (Fungsi ini tidak berubah, tapi sekarang akan mengirim data resource juga) ...
     status = simulator.get_status()
-    # jsonify mengubah dictionary Python menjadi format JSON untuk web
     return jsonify(status)
-# ==========================
+
+# === INI ENDPOINT BARUNYA ===
+@app.route('/api/add_resource', methods=['POST'])
+def add_resource_api():
+    """API endpoint untuk menambah sumber daya."""
+    data = request.json
+    resource_type = data.get('resource')
+    amount = data.get('amount')
+    
+    if not resource_type or not amount:
+        return jsonify({"status": "error", "message": "Missing resource or amount"}), 400
+
+    result = simulator.add_resource(resource_type, float(amount))
+    return jsonify(result)
+# ============================
 
 
 if __name__ == '__main__':
-    # Jalankan simulasi di thread latar belakang
+    # ... (Bagian ini tidak berubah) ...
     simulation_thread = threading.Thread(target=run_simulation_background, daemon=True)
     simulation_thread.start()
-    
-    # Jalankan server web Flask
     app.run(host='0.0.0.0', port=5000, debug=True)
