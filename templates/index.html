@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PLTN Control Panel</title>
+    <title>PLTN Control Panel v2.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <style>
@@ -11,156 +11,175 @@
         ::-webkit-scrollbar-track { background: #1f2937; }
         ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        .status-light { transition: background-color 0.5s ease; }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-200 font-sans">
     <div class="flex h-screen">
         <nav class="w-20 bg-gray-800 p-4 flex flex-col items-center space-y-6">
-            <div class="p-2 bg-blue-600 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg></div>
-            <div class="flex flex-col space-y-4">
-                <a href="#" id="resources-btn" class="p-3 bg-gray-700 rounded-lg hover:bg-blue-500" title="Resources"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg></a>
-                <a href="#" id="control-btn" class="p-3 bg-gray-700 rounded-lg hover:bg-blue-500" title="Control"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m12 0a2 2 0 100-4m0 4a2 2 0 110-4m-6 0a2 2 0 100-4m0 4a2 2 0 110-4" /></svg></a>
-                <a href="#" id="analytics-btn" class="p-3 bg-gray-700 rounded-lg hover:bg-blue-500" title="Analytics"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg></a>
-            </div>
-        </nav>
+            </nav>
 
         <main class="flex-1 p-8 overflow-y-auto">
-            <div id="analytics-page" class="page">
-                <h1 class="text-3xl font-bold mb-8">Dashboard Analytics</h1>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-gray-800 p-6 rounded-lg"><h2 class="text-sm font-medium text-gray-400">Power Output</h2><p id="power-output" class="text-3xl font-bold mt-2">-- MW</p></div>
-                    <div class="bg-gray-800 p-6 rounded-lg"><h2 class="text-sm font-medium text-gray-400">Reactor Temperature</h2><p id="reactor-temp" class="text-3xl font-bold mt-2">-- °C</p></div>
-                    <div class="bg-gray-800 p-6 rounded-lg"><h2 class="text-sm font-medium text-gray-400">System Pressure</h2><p id="system-pressure" class="text-3xl font-bold mt-2">-- bar</p></div>
-                    <div class="bg-gray-800 p-6 rounded-lg"><h2 class="text-sm font-medium text-gray-400">Neutron Flux</h2><p id="neutron-flux" class="text-3xl font-bold mt-2">--</p></div>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-                    <div class="bg-gray-800 p-6 rounded-lg"><h2 class="text-xl font-bold mb-4">Temperature History</h2><div id="temp-chart" class="h-64"></div></div>
-                    <div class="bg-gray-800 p-6 rounded-lg"><h2 class="text-xl font-bold mb-4">Power History</h2><div id="power-chart" class="h-64"></div></div>
-                    <div class="bg-gray-800 p-6 rounded-lg"><h2 class="text-xl font-bold mb-4">Neutron Flux History</h2><div id="flux-chart" class="h-64"></div></div>
-                    <div class="bg-gray-800 p-6 rounded-lg"><h2 class="text-xl font-bold mb-4">Control Rod Position History</h2><div id="rod-chart" class="h-64"></div></div>
+            
+            <div id="control-page" class="page">
+                <h1 class="text-3xl font-bold mb-2">Operator Control Console</h1>
+                <p class="text-gray-400 mb-8">Lakukan prosedur startup reaktor secara manual.</p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-1 bg-gray-800 p-6 rounded-lg">
+                        <h2 class="text-xl font-bold mb-4">Startup Procedure Checklist</h2>
+                        <ul class="space-y-4">
+                            <li id="step-1" class="flex items-center justify-between"><span class="flex items-center"><span class="status-light w-3 h-3 rounded-full bg-gray-600 mr-3"></span>1. Insert Fuel Rods</span><button id="insert-fuel-btn" class="action-btn bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-bold py-1 px-3 rounded">Execute</button></li>
+                            <li id="step-2" class="flex items-center justify-between"><span class="flex items-center"><span class="status-light w-3 h-3 rounded-full bg-gray-600 mr-3"></span>2. Run Coolant System Check</span><button id="coolant-check-btn" class="action-btn bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-bold py-1 px-3 rounded" disabled>Execute</button></li>
+                            <li id="step-3" class="flex items-center justify-between"><span class="flex items-center"><span class="status-light w-3 h-3 rounded-full bg-gray-600 mr-3"></span>3. Insert Neutron Source</span><button id="insert-source-btn" class="action-btn bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-bold py-1 px-3 rounded" disabled>Execute</button></li>
+                            <li id="step-4" class="flex items-center justify-between"><span class="flex items-center"><span class="status-light w-3 h-3 rounded-full bg-gray-600 mr-3"></span>4. Achieve Criticality (k=1)</span><span class="text-gray-400">Manual Adjust</span></li>
+                            <li id="step-5" class="flex items-center justify-between"><span class="flex items-center"><span class="status-light w-3 h-3 rounded-full bg-gray-600 mr-3"></span>5. Power Up to Operational</span><span class="text-gray-400">Manual Adjust</span></li>
+                        </ul>
+                        <button id="shutdown-btn" class="w-full mt-8 bg-red-600 hover:bg-red-700 disabled:bg-gray-500 text-white font-bold py-2 px-4 rounded" disabled>SHUTDOWN</button>
+                    </div>
+
+                    <div class="lg:col-span-2 grid grid-cols-2 gap-8">
+                        <div class="col-span-2 bg-gray-800 p-6 rounded-lg flex items-center justify-between">
+                            <div>
+                               <h2 class="text-lg font-medium text-gray-400">System Status</h2>
+                               <p id="status-indicator" class="text-4xl font-black transition-colors">OFFLINE</p>
+                            </div>
+                            <div>
+                               <h2 class="text-lg font-medium text-gray-400 text-right">Reactor State</h2>
+                               <p id="reactor-state" class="text-4xl font-bold text-right">--</p>
+                            </div>
+                        </div>
+
+                        <div class="col-span-2 bg-gray-800 p-6 rounded-lg">
+                            <h2 class="text-xl font-bold mb-4">Manual Control Rod</h2>
+                            <label for="rod-slider" class="block mb-2">Position (% Extracted): <span id="rod-slider-value" class="font-bold text-xl">0.00</span>%</label>
+                            <input id="rod-slider" type="range" min="0" max="100" value="0" step="0.5" class="w-full h-3 bg-gray-700 rounded-lg appearance-none cursor-pointer" disabled>
+                        </div>
+
+                        <div class="bg-gray-800 p-4 rounded-lg text-center"><h3 class="text-sm font-medium text-gray-400">Reactivity (k)</h3><p id="reactivity-k" class="text-3xl font-bold">--</p></div>
+                        <div class="bg-gray-800 p-4 rounded-lg text-center"><h3 class="text-sm font-medium text-gray-400">Temperature (°C)</h3><p id="reactor-temp" class="text-3xl font-bold">--</p></div>
+                        <div class="bg-gray-800 p-4 rounded-lg text-center"><h3 class="text-sm font-medium text-gray-400">Power (MW)</h3><p id="power-output" class="text-3xl font-bold">--</p></div>
+                        <div class="bg-gray-800 p-4 rounded-lg text-center"><h3 class="text-sm font-medium text-gray-400">Neutron Flux</h3><p id="neutron-flux" class="text-3xl font-bold">--</p></div>
+                    </div>
                 </div>
             </div>
-
-            <div id="resources-page" class="page hidden">
-                <h1 class="text-3xl font-bold mb-8">Resources Management</h1>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-gray-800 p-6 rounded-lg"><h2 class="text-xl font-bold text-green-400">Uranium-235</h2><p class="text-sm text-gray-400">Bahan Bakar Utama</p><p class="text-4xl font-bold my-4"><span id="uranium-level">--</span> kg</p><div class="flex space-x-2"><input id="uranium-amount" type="number" placeholder="kg" class="w-full bg-gray-700 rounded p-2"><button data-resource="uranium" class="add-resource-btn bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add</button></div></div>
-                    <div class="bg-gray-800 p-6 rounded-lg"><h2 class="text-xl font-bold text-blue-400">Heavy Water (D₂O)</h2><p class="text-sm text-gray-400">Moderator Neutron</p><p class="text-4xl font-bold my-4"><span id="heavywater-level">--</span> L</p><div class="flex space-x-2"><input id="heavy_water-amount" type="number" placeholder="L" class="w-full bg-gray-700 rounded p-2"><button data-resource="heavy_water" class="add-resource-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add</button></div></div>
-                    <div class="bg-gray-800 p-6 rounded-lg"><h2 class="text-xl font-bold text-red-400">Polonium-210</h2><p class="text-sm text-gray-400">Inisiator Neutron</p><p class="text-4xl font-bold my-4"><span id="polonium-level">--</span> g</p><div class="flex space-x-2"><input id="polonium-amount" type="number" placeholder="g" class="w-full bg-gray-700 rounded p-2"><button data-resource="polonium" class="add-resource-btn bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Add</button></div></div>
-                </div>
-            </div>
-
-            <div id="control-page" class="page hidden"><h1 class="text-3xl font-bold mb-8">System Control</h1></div>
+            
+            <div id="analytics-page" class="page hidden"><h1 class="text-3xl font-bold mb-8">Detailed Analytics</h1></div>
+            <div id="resources-page" class="page hidden"><h1 class="text-3xl font-bold mb-8">Resources Management</h1></div>
         </main>
     </div>
 
     <script>
-        // === BAGIAN YANG DIPERBAIKI ADA DI SINI ===
-        let dataHistory = { time: [], temperature: [], power: [], rod_position: [], neutron_flux: [] };
-        const MAX_DATA_POINTS = 60;
-
-        // Fungsi bantuan untuk membuat opsi grafik
-        function createChartOptions(name, color) {
-            return {
-                series: [{ name: name, data: [] }],
-                chart: { type: 'line', height: 250, animations: { easing: 'linear', dynamicAnimation: { speed: 1000 } }, toolbar: { show: false }, background: 'transparent', foreColor: '#A0AEC0' },
-                xaxis: { type: 'datetime', labels: { style: { colors: '#9CA3AF' } } },
-                yaxis: { labels: { style: { colors: '#9CA3AF' }, formatter: (val) => { if (val >= 1e12) { return val.toExponential(2); } return val.toFixed(2); } } },
-                stroke: { curve: 'smooth', width: 2 },
-                tooltip: { theme: 'dark' },
-                grid: { borderColor: '#374151' },
-                colors: [color]
-            };
-        }
-        // ===========================================
-
-        var tempChart = new ApexCharts(document.querySelector("#temp-chart"), createChartOptions('Temperature (°C)', '#3B82F6'));
-        var powerChart = new ApexCharts(document.querySelector("#power-chart"), createChartOptions('Power (%)', '#F59E0B'));
-        var fluxChart = new ApexCharts(document.querySelector("#flux-chart"), createChartOptions('Neutron Flux', '#10B981'));
-        var rodChart = new ApexCharts(document.querySelector("#rod-chart"), createChartOptions('Rod Position (%)', '#EF4444'));
-
-        tempChart.render(); powerChart.render(); fluxChart.render(); rodChart.render();
-
-        const pages = document.querySelectorAll('.page');
-        const navButtons = { 'resources-btn': 'resources-page', 'control-btn': 'control-page', 'analytics-btn': 'analytics-page' };
-
-        function showPage(pageId) {
-            pages.forEach(page => page.classList.add('hidden'));
-            const activePage = document.getElementById(pageId);
-            if (activePage) { activePage.classList.remove('hidden'); }
-
-            document.querySelectorAll('nav a').forEach(btn => btn.classList.replace('bg-blue-500', 'bg-gray-700'));
-            const activeButton = Object.keys(navButtons).find(key => navButtons[key] === pageId);
-            if (activeButton) {
-                const activeBtnEl = document.getElementById(activeButton);
-                if (activeBtnEl) { activeBtnEl.classList.replace('bg-gray-700', 'bg-blue-500'); }
+        // --- Referensi Elemen UI ---
+        const ui = {
+            buttons: {
+                insertFuel: document.getElementById('insert-fuel-btn'),
+                coolantCheck: document.getElementById('coolant-check-btn'),
+                insertSource: document.getElementById('insert-source-btn'),
+                shutdown: document.getElementById('shutdown-btn'),
+            },
+            steps: {
+                step1: document.querySelector('#step-1 .status-light'),
+                step2: document.querySelector('#step-2 .status-light'),
+                step3: document.querySelector('#step-3 .status-light'),
+                step4: document.querySelector('#step-4 .status-light'),
+                step5: document.querySelector('#step-5 .status-light'),
+            },
+            displays: {
+                statusIndicator: document.getElementById('status-indicator'),
+                reactorState: document.getElementById('reactor-state'),
+                rodSliderValue: document.getElementById('rod-slider-value'),
+                reactivityK: document.getElementById('reactivity-k'),
+                reactorTemp: document.getElementById('reactor-temp'),
+                powerOutput: document.getElementById('power-output'),
+                neutronFlux: document.getElementById('neutron-flux'),
+            },
+            controls: {
+                rodSlider: document.getElementById('rod-slider'),
             }
-        }
+        };
 
-        Object.keys(navButtons).forEach(buttonId => {
-            const buttonEl = document.getElementById(buttonId);
-            if(buttonEl) {
-                buttonEl.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    showPage(navButtons[buttonId]);
+        // --- Logika API ---
+        async function performAction(action, value = null) {
+            try {
+                const payload = { action };
+                if (value !== null) {
+                    payload.value = value;
+                }
+                const response = await fetch('/api/action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
                 });
+                const result = await response.json();
+                console.log(result.message); // Tampilkan feedback di console
+            } catch (error) {
+                console.error(`Action ${action} failed:`, error);
             }
+        }
+
+        // --- Event Listeners ---
+        ui.buttons.insertFuel.addEventListener('click', () => performAction('insert_fuel'));
+        ui.buttons.coolantCheck.addEventListener('click', () => performAction('run_coolant_check'));
+        ui.buttons.insertSource.addEventListener('click', () => performAction('insert_neutron_source'));
+        ui.buttons.shutdown.addEventListener('click', () => performAction('shutdown'));
+        ui.controls.rodSlider.addEventListener('input', () => {
+            const newPosition = ui.controls.rodSlider.value;
+            ui.displays.rodSliderValue.innerText = parseFloat(newPosition).toFixed(2);
+            performAction('set_rod_position', newPosition);
         });
 
-        document.querySelectorAll('.add-resource-btn').forEach(button => {
-            button.addEventListener('click', async function() {
-                const resourceType = this.getAttribute('data-resource');
-                const amountInput = document.getElementById(`${resourceType}-amount`);
-                const amount = parseFloat(amountInput.value);
-                if (isNaN(amount) || amount <= 0) { alert('Please enter a valid positive number.'); return; }
-                try {
-                    const response = await fetch('/api/add_resource', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ resource: resourceType, amount: amount })
-                    });
-                    const result = await response.json();
-                    alert(result.message);
-                    amountInput.value = '';
-                    updateDashboard();
-                } catch (error) { console.error('Failed to add resource:', error); alert('Error adding resource.'); }
-            });
-        });
+        // --- Fungsi Update UI Utama ---
+        function updateUI(data) {
+            // Update Teks
+            ui.displays.reactorState.innerText = data.reactor_state;
+            ui.displays.reactivityK.innerText = data.reactivity_k.toFixed(4);
+            ui.displays.reactorTemp.innerText = data.coolant_temp_celsius.toFixed(2);
+            ui.displays.powerOutput.innerText = data.reactor_power_mw.toFixed(4);
+            ui.displays.neutronFlux.innerText = data.neutron_flux.toExponential(2);
+            ui.displays.rodSliderValue.innerText = data.rod_position.toFixed(2);
+            
+            // Update Indikator Status
+            const indicator = ui.displays.statusIndicator;
+            indicator.innerText = data.status_indicator;
+            indicator.classList.remove('text-green-400', 'text-yellow-400', 'text-red-500', 'text-gray-500');
+            if (data.status_indicator === 'AMAN') indicator.classList.add('text-green-400');
+            else if (data.status_indicator === 'RENTAN') indicator.classList.add('text-yellow-400');
+            else if (data.status_indicator === 'BERESIKO') indicator.classList.add('text-orange-500');
+            else if (data.status_indicator === 'FAILURE') indicator.classList.add('text-red-500', 'animate-pulse');
+            else indicator.classList.add('text-gray-500');
 
-        async function updateDashboard() {
+            // Logika State Machine untuk Tombol & Slider
+            const state = data.reactor_state;
+            ui.buttons.insertFuel.disabled = state !== 'COLD_SHUTDOWN';
+            ui.buttons.coolantCheck.disabled = state !== 'PRE_STARTUP';
+            ui.buttons.insertSource.disabled = state !== 'PRE_STARTUP' || !data.is_coolant_system_ok;
+            ui.controls.rodSlider.disabled = !data.is_neutron_source_inserted || state === 'COLD_SHUTDOWN';
+            ui.buttons.shutdown.disabled = state === 'COLD_SHUTDOWN' || state === 'SHUTDOWN';
+
+            // Logika State Machine untuk Lampu Indikator Prosedur
+            ui.steps.step1.className = 'status-light w-3 h-3 rounded-full mr-3 ' + (data.uranium_kg > 0 ? 'bg-green-500' : 'bg-gray-600');
+            ui.steps.step2.className = 'status-light w-3 h-3 rounded-full mr-3 ' + (data.is_coolant_system_ok ? 'bg-green-500' : 'bg-gray-600');
+            ui.steps.step3.className = 'status-light w-3 h-3 rounded-full mr-3 ' + (data.is_neutron_source_inserted ? 'bg-green-500' : 'bg-gray-600');
+            ui.steps.step4.className = 'status-light w-3 h-3 rounded-full mr-3 ' + (state === 'CRITICAL' || state === 'POWER_UP' || state === 'OPERATIONAL' ? 'bg-green-500' : 'bg-gray-600');
+            ui.steps.step5.className = 'status-light w-3 h-3 rounded-full mr-3 ' + (state === 'OPERATIONAL' ? 'bg-green-500' : 'bg-gray-600');
+        }
+
+        // --- Loop Utama ---
+        async function mainLoop() {
             try {
                 const response = await fetch('/api/status');
                 const data = await response.json();
-
-                document.getElementById('power-output').innerText = `${data.reactor_power_percent.toFixed(2)} MW`;
-                document.getElementById('reactor-temp').innerText = `${data.coolant_temp_celsius.toFixed(2)} °C`;
-                document.getElementById('system-pressure').innerText = `${data.system_pressure_bar.toFixed(2)} bar`;
-                document.getElementById('neutron-flux').innerText = `${(data.neutron_flux / 1e13).toExponential(2)}`;
-                document.getElementById('uranium-level').innerText = data.uranium_kg.toFixed(2);
-                document.getElementById('heavywater-level').innerText = data.heavy_water_liters.toFixed(2);
-                document.getElementById('polonium-level').innerText = data.polonium_grams.toFixed(2);
-
-                const currentTime = data.timestamp * 1000;
-                dataHistory.time.push(currentTime);
-                dataHistory.temperature.push(data.coolant_temp_celsius.toFixed(2));
-                dataHistory.power.push(data.reactor_power_percent.toFixed(2));
-                dataHistory.neutron_flux.push(data.neutron_flux);
-                dataHistory.rod_position.push(data.rod_position.toFixed(2));
-                if (dataHistory.time.length > MAX_DATA_POINTS) {
-                    Object.keys(dataHistory).forEach(key => dataHistory[key].shift());
-                }
-
-                tempChart.updateSeries([{ data: dataHistory.temperature.map((val, i) => [dataHistory.time[i], val]) }]);
-                powerChart.updateSeries([{ data: dataHistory.power.map((val, i) => [dataHistory.time[i], val]) }]);
-                fluxChart.updateSeries([{ data: dataHistory.neutron_flux.map((val, i) => [dataHistory.time[i], val]) }]);
-                rodChart.updateSeries([{ data: dataHistory.rod_position.map((val, i) => [dataHistory.time[i], val]) }]);
-
-            } catch (error) { console.error('Gagal mengambil data:', error); }
+                updateUI(data);
+            } catch (error) {
+                console.error("Failed to fetch status:", error);
+            }
         }
 
-        showPage('analytics-page');
-        setInterval(updateDashboard, 1000);
-        updateDashboard();
+        // Halaman default
+        // showPage('control-page'); 
+        setInterval(mainLoop, 1000);
+        mainLoop();
     </script>
 </body>
 </html>
