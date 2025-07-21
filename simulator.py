@@ -68,12 +68,12 @@ class ReactorSimulator:
         # Logika Fisi berdasarkan state
         if self.state in ["SUBCRITICAL", "CRITICAL", "POWER_UP", "OPERATIONAL"]:
             # Reaksi berantai: daya baru = daya lama * reaktivitas
-            power_from_fission = self.reactor_power * self.reactivity_k
-            
+            power_increase = (self.reactivity_k - 0.99) * (self.rod_position / 25.0)
+        
             # Tambahan daya dari sumber neutron eksternal (hanya di awal)
-            power_from_source = 1e-5 if self.state == "SUBCRITICAL" and self.neutron_flux < 1e10 else 0
+            power_from_source = 1e-5 if self.state == "SUBCRITICAL" else 0
             
-            self.reactor_power = power_from_fission + power_from_source
+            self.reactor_power += power_increase * delta_time + power_from_source
             self.reactor_power = max(0, self.reactor_power) # Pastikan tidak negatif
 
             # Transisi state otomatis
