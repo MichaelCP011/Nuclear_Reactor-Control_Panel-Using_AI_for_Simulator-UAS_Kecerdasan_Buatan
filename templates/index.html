@@ -3,229 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PLTN Control Panel v2.1</title>
+    <title>PLTN Control Console v3.2</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <style>
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1f2937; }
-        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
-        .status-light { transition: background-color 0.5s ease; }
-        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        /* CSS Kustom */
+        @keyframes pulse-green { 0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); } }
+        @keyframes pulse-red { 0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } }
+        .blinking-startup { animation: pulse-green 2s infinite; }
+        .glowing-shutdown { box-shadow: 0 0 8px #EF4444; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #4B5563; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #4B5563; transition: .4s; border-radius: 28px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: #22C55E; }
-        input:checked + .slider:before { transform: translateX(26px); }
-        input:disabled + .slider { cursor: not-allowed; background-color: #374151; }
-        .flow-connector { height: 4px; width: 100%; background-color: #374151; transition: background-color 0.5s ease-in-out; }
-        input[type="range"]:disabled::-webkit-slider-thumb { background: #4B5563; }
-        input[type="range"]:disabled::-moz-range-thumb { background: #4B5563; }
+        input:checked + .slider:before { transform: translateX(22px); }
+        input:disabled + .slider { cursor: not-allowed; background-color: #374151 !important; }
+        .flow-connector { height: 6px; width: 100%; background-color: #374151; transition: background-color 0.5s ease-in-out; }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200 font-sans">
-    <div class="flex h-screen">
-        <nav class="w-20 bg-gray-800 p-4 flex flex-col items-center space-y-6">
-            <div class="p-2 bg-blue-600 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg></div>
-            <div class="flex flex-col space-y-4">
-                <a href="#" id="resources-btn" class="p-3 bg-gray-700 rounded-lg hover:bg-blue-500" title="Resources"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg></a>
-                <a href="#" id="control-btn" class="p-3 bg-gray-700 rounded-lg hover:bg-blue-500" title="Control"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m12 0a2 2 0 100-4m0 4a2 2 0 110-4m-6 0a2 2 0 100-4m0 4a2 2 0 110-4" /></svg></a>
-                <a href="#" id="analytics-btn" class="p-3 bg-gray-700 rounded-lg hover:bg-blue-500" title="Analytics"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg></a>
+<body class="bg-gray-900 text-gray-200 font-sans select-none">
+    <div class="flex flex-col h-screen">
+        <header class="bg-gray-800 p-4 flex justify-between items-center border-b border-gray-700">
+            <h1 class="text-2xl font-bold">PLTN Operator Console</h1>
+            <div id="status-indicator-wrapper" class="text-right bg-gray-900 p-2 px-4 rounded-lg">
+                <p id="status-indicator" class="text-2xl font-black">CONNECTING...</p>
             </div>
-        </nav>
+        </header>
 
-        <main class="flex-1 p-8 overflow-y-auto">
-            <div id="control-page" class="page">
-                <div class="flex justify-between items-start mb-8">
-                    <div>
-                        <h1 class="text-3xl font-bold">Operator Control Console</h1>
-                        <p class="text-gray-400">Execute reactor startup procedure manually.</p>
-                    </div>
-                    <div class="text-right bg-gray-800 p-4 rounded-lg">
-                        <h2 class="text-lg font-medium text-gray-400">System Status</h2>
-                        <p id="status-indicator" class="text-4xl font-black transition-colors">OFFLINE</p>
-                    </div>
-                </div>
-
-                <div id="startup-panel" class="bg-gray-800 p-6 rounded-lg">
-                    <div id="startup-button-container" class="text-center py-12">
-                        <button id="system-startup-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold text-2xl py-4 px-8 rounded-lg shadow-lg">SYSTEM STARTUP</button>
-                    </div>
-                    <div id="procedure-flow" class="hidden">
-                        <h2 class="text-xl font-bold mb-6 text-center">Startup Procedure Flow</h2>
-                        <div class="flex items-center justify-around text-center p-4">
-                            <div class="flex flex-col items-center w-48"><label class="switch"><input type="checkbox" id="fuel-switch" disabled><span class="slider"></span></label><p class="mt-2 font-semibold">1. Insert Fuel Rods</p></div>
-                            <div id="connector-1" class="flow-connector flex-1 mx-4"></div>
-                            <div class="flex flex-col items-center w-48"><label class="switch"><input type="checkbox" id="coolant-switch" disabled><span class="slider"></span></label><p class="mt-2 font-semibold">2. Coolant System Check</p></div>
-                            <div id="connector-2" class="flow-connector flex-1 mx-4"></div>
-                            <div class="flex flex-col items-center w-48"><label class="switch"><input type="checkbox" id="neutron-switch" disabled><span class="slider"></span></label><p class="mt-2 font-semibold">3. Insert Neutron Source</p></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="manual-control-panel" class="hidden grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-                    <div class="lg:col-span-2 bg-gray-800 p-6 rounded-lg">
-                        <h2 class="text-xl font-bold mb-4">Manual Control Rod</h2>
-                        <label for="rod-slider" class="block mb-2 text-lg">Position (% Extracted): <span id="rod-slider-value" class="font-bold text-2xl text-yellow-400">0.00</span>%</label>
-                        <input id="rod-slider" type="range" min="0" max="100" value="0" step="0.5" class="w-full h-3 bg-gray-700 rounded-lg appearance-none cursor-pointer" disabled>
-                        <div class="grid grid-cols-4 gap-4 mt-6 text-center">
-                            <div><h3 class="text-sm font-medium text-gray-400">Reactivity (k)</h3><p id="reactivity-k" class="text-3xl font-bold">--</p></div>
-                            <div><h3 class="text-sm font-medium text-gray-400">Temperature (°C)</h3><p id="reactor-temp" class="text-3xl font-bold">--</p></div>
-                            <div><h3 class="text-sm font-medium text-gray-400">Power (MW)</h3><p id="power-output" class="text-3xl font-bold">--</p></div>
-                            <div><h3 class="text-sm font-medium text-gray-400">Neutron Flux</h3><p id="neutron-flux" class="text-3xl font-bold">--</p></div>
-                        </div>
-                    </div>
-                    <div class="bg-red-900/50 border border-red-700 p-6 rounded-lg flex flex-col items-center justify-center">
-                        <h2 class="text-xl font-bold text-red-300">Emergency Actions</h2>
-                        <button id="shutdown-btn" class="mt-4 w-full text-2xl bg-red-600 hover:bg-red-700 text-white font-black py-4 px-4 rounded animate-pulse hover:animate-none" disabled>SHUTDOWN</button>
-                    </div>
-                </div>
+        <main class="flex-1 p-6 overflow-y-auto">
+            <div class="flex justify-center space-x-6 mb-6">
+                <button id="startup-btn" class="text-xl font-bold py-3 px-8 rounded-lg">REACTOR STARTUP</button>
+                <button id="shutdown-btn" class="text-xl font-bold py-3 px-8 rounded-lg">REACTOR SHUTDOWN</button>
+                <button id="scram-btn" class="text-xl font-bold bg-yellow-500 text-black py-3 px-8 rounded-lg">EMERGENCY SCRAM</button>
             </div>
 
-            <div id="analytics-page" class="page hidden"><h1 class="text-3xl font-bold mb-8">Detailed Analytics (Coming Soon)</h1></div>
-            <div id="resources-page" class="page hidden"><h1 class="text-3xl font-bold mb-8">Resources Management (Coming Soon)</h1></div>
+            <div id="procedure-panel" class="flex items-center justify-center p-4 bg-gray-800/50 rounded-lg">
+                <div class="bg-gray-800 p-4 rounded-lg w-72 text-center border-2 border-transparent"><div class="flex justify-between items-center mb-2"><h2 class="font-bold">1. COOLANT & MODERATOR</h2><div id="block-1-indicator" class="w-4 h-4 rounded-full bg-gray-600"></div></div><p class="text-sm text-gray-400">Moderator: D₂O</p><div class="w-full bg-gray-700 rounded-full h-2.5 my-3"><div id="block-1-progress" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div></div><div class="mt-3"><label class="switch"><input type="checkbox" id="coolant-switch" disabled><span class="slider"></span></label></div></div>
+                <div id="connector-1" class="flow-connector flex-1 max-w-16"></div>
+                <div class="bg-gray-800 p-4 rounded-lg w-72 text-center border-2 border-transparent"><div class="flex justify-between items-center mb-2"><h2 class="font-bold">2. ROD SYSTEMS</h2><div id="block-2-indicator" class="w-4 h-4 rounded-full bg-gray-600"></div></div><p class="text-sm text-gray-400">Lowering Rods</p><div class="w-full bg-gray-700 rounded-full h-2.5 my-3"><div id="block-2-progress" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div></div><div class="mt-3"><label class="switch"><input type="checkbox" id="rods-switch" disabled><span class="slider"></span></label></div></div>
+                <div id="connector-2" class="flow-connector flex-1 max-w-16"></div>
+                <div class="bg-gray-800 p-4 rounded-lg w-72 text-center border-2 border-transparent"><div class="flex justify-between items-center mb-2"><h2 class="font-bold">3. FISSION REACTION</h2><div id="block-3-indicator" class="w-4 h-4 rounded-full bg-gray-600"></div></div><p class="text-sm text-gray-400">Initiator: Polonium-210</p><div class="w-full bg-gray-700 rounded-full h-2.5 my-3"><div id="block-3-progress" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div></div><div class="mt-3"><label class="switch"><input type="checkbox" id="initiator-switch" disabled><span class="slider"></span></label></div></div>
+            </div>
+
+            <div id="main-control-panel" class="hidden grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+                <div class="lg:col-span-2 bg-gray-800 p-6 rounded-lg"><h2 class="text-xl font-bold">Main Control Rod</h2><label class="block mb-2">Position (% Extracted): <span id="rod-slider-value" class="font-bold text-2xl text-yellow-400">0.00</span>%</label><input id="rod-slider" type="range" min="0" max="100" value="0" step="0.5" class="w-full h-3 rounded-lg appearance-none cursor-pointer" disabled></div>
+                <div class="bg-gray-800 p-6 rounded-lg text-center"><h2 class="font-bold">Reactivity (k)</h2><p id="reactivity-k" class="text-5xl font-mono font-bold">0.0000</p></div>
+            </div>
         </main>
     </div>
 
-    <div id="startup-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-gray-800 p-8 rounded-lg text-center shadow-xl">
-            <h2 class="text-2xl font-bold mb-4">Confirm Startup Sequence</h2>
-            <p class="mb-4">Enter activation key to proceed.</p>
-            <input type="text" id="activation-key" class="bg-gray-700 text-center text-xl p-2 rounded w-full mb-4" placeholder="[ active ]">
-            <div class="flex justify-center space-x-4">
-                <button id="confirm-startup-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded">Confirm</button>
-                <button id="cancel-startup-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded">Cancel</button>
-            </div>
-        </div>
-    </div>
-
     <script>
+    // Menunggu seluruh halaman HTML dimuat sebelum menjalankan script
+    document.addEventListener('DOMContentLoaded', function() {
+        
         // --- Referensi Elemen UI ---
         const ui = {
-            buttons: {
-                startup: document.getElementById('system-startup-btn'),
-                confirmStartup: document.getElementById('confirm-startup-btn'),
-                cancelStartup: document.getElementById('cancel-startup-btn'),
-                shutdown: document.getElementById('shutdown-btn'),
+            buttons: { startup: document.getElementById('startup-btn'), shutdown: document.getElementById('shutdown-btn'), scram: document.getElementById('scram-btn') },
+            indicator: document.getElementById('status-indicator'),
+            blocks: {
+                b1_indicator: document.getElementById('block-1-indicator'), b2_indicator: document.getElementById('block-2-indicator'), b3_indicator: document.getElementById('block-3-indicator'),
+                b1_progress: document.getElementById('block-1-progress'), b2_progress: document.getElementById('block-2-progress'), b3_progress: document.getElementById('block-3-progress'),
             },
-            switches: {
-                fuel: document.getElementById('fuel-switch'),
-                coolant: document.getElementById('coolant-switch'),
-                neutron: document.getElementById('neutron-switch')
-            },
-            connectors: {
-                c1: document.getElementById('connector-1'),
-                c2: document.getElementById('connector-2')
-            },
-            displays: {
-                statusIndicator: document.getElementById('status-indicator'),
-                reactorState: document.getElementById('reactor-state'), // This ID was missing from HTML, now it's logic-driven
-                rodSliderValue: document.getElementById('rod-slider-value'),
-                reactivityK: document.getElementById('reactivity-k'),
-                reactorTemp: document.getElementById('reactor-temp'),
-                powerOutput: document.getElementById('power-output'),
-                neutronFlux: document.getElementById('neutron-flux'),
-            },
-            controls: { rodSlider: document.getElementById('rod-slider') },
-            modals: { startup: document.getElementById('startup-modal') },
-            inputs: { activationKey: document.getElementById('activation-key') },
-            panels: {
-                startupButtonContainer: document.getElementById('startup-button-container'),
-                procedureFlow: document.getElementById('procedure-flow'),
-                manualControl: document.getElementById('manual-control-panel')
-            }
+            connectors: { c1: document.getElementById('connector-1'), c2: document.getElementById('connector-2') },
+            switches: { coolant: document.getElementById('coolant-switch'), rods: document.getElementById('rods-switch'), initiator: document.getElementById('initiator-switch') },
+            mainControl: { panel: document.getElementById('main-control-panel'), slider: document.getElementById('rod-slider'), sliderValue: document.getElementById('rod-slider-value'), reactivity: document.getElementById('reactivity-k') }
         };
 
         // --- Logika API ---
         async function performAction(action, value = null) {
             try {
-                const payload = { action };
-                if (value !== null) { payload.value = value; }
-                const response = await fetch('/api/action', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-                console.log(`Action ${action}: ${result.message}`);
-                mainLoop(); // Panggil update setelah setiap aksi
+                const payload = { action, value };
+                await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                mainLoop();
             } catch (error) { console.error(`Action ${action} failed:`, error); }
         }
 
         // --- Event Listeners ---
-        ui.buttons.startup.addEventListener('click', () => ui.modals.startup.classList.remove('hidden'));
-        ui.buttons.cancelStartup.addEventListener('click', () => ui.modals.startup.classList.add('hidden'));
-        ui.buttons.confirmStartup.addEventListener('click', () => {
-            if (ui.inputs.activationKey.value.toLowerCase() === 'active') {
-                ui.modals.startup.classList.add('hidden');
-                performAction('insert_fuel');
-            } else { alert('Invalid Activation Key!'); }
-        });
-        
-        ui.switches.coolant.addEventListener('change', () => { if (ui.switches.coolant.checked) performAction('run_coolant_check'); });
-        ui.switches.neutron.addEventListener('change', () => { if (ui.switches.neutron.checked) performAction('insert_neutron_source'); });
-        ui.buttons.shutdown.addEventListener('click', () => { if(confirm('Confirm Reactor Shutdown?')) performAction('shutdown'); });
-        ui.controls.rodSlider.addEventListener('input', () => {
-            const newPosition = ui.controls.rodSlider.value;
-            ui.displays.rodSliderValue.innerText = parseFloat(newPosition).toFixed(2);
-        });
-        ui.controls.rodSlider.addEventListener('change', () => { // Kirim data saat slider dilepas
-            performAction('set_rod_position', ui.controls.rodSlider.value);
-        });
+        ui.buttons.startup.addEventListener('click', () => performAction('begin_startup'));
+        ui.buttons.shutdown.addEventListener('click', () => { if(confirm('Confirm gradual reactor shutdown?')) performAction('shutdown'); });
+        ui.buttons.scram.addEventListener('click', () => { if(confirm('CONFIRM EMERGENCY SCRAM?')) performAction('scram'); });
+        ui.switches.coolant.addEventListener('change', () => { if(ui.switches.coolant.checked) performAction('activate_coolant'); });
+        ui.switches.rods.addEventListener('change', () => { if(ui.switches.rods.checked) performAction('lower_rods'); });
+        ui.switches.initiator.addEventListener('change', () => { if(ui.switches.initiator.checked) performAction('activate_initiator', 100); });
+        ui.mainControl.slider.addEventListener('change', () => performAction('set_rod_position', ui.mainControl.slider.value));
+        ui.mainControl.slider.addEventListener('input', () => { ui.mainControl.sliderValue.innerText = parseFloat(ui.mainControl.slider.value).toFixed(2); });
 
         // --- Fungsi Update UI Utama ---
         function updateUI(data) {
-            // Update Teks
-            ui.displays.statusIndicator.innerText = data.status_indicator;
-            // ui.displays.reactorState.innerText = data.reactor_state;
-            ui.displays.reactivityK.innerText = data.reactivity_k.toFixed(4);
-            ui.displays.reactorTemp.innerText = data.coolant_temp_celsius.toFixed(2);
-            ui.displays.powerOutput.innerText = data.reactor_power_mw.toFixed(4);
-            ui.displays.neutronFlux.innerText = data.neutron_flux.toExponential(2);
-            if(document.activeElement !== ui.controls.rodSlider) {
-                ui.controls.rodSlider.value = data.rod_position;
-                ui.displays.rodSliderValue.innerText = data.rod_position.toFixed(2);
-            }
-
-            // Update Indikator Status
-            const indicator = ui.displays.statusIndicator;
-            indicator.classList.remove('text-green-400', 'text-yellow-400', 'text-orange-500', 'text-red-500', 'text-gray-500');
-            if (data.status_indicator === 'AMAN') indicator.classList.add('text-green-400');
-            else if (data.status_indicator === 'RENTAN') indicator.classList.add('text-yellow-400');
-            else if (data.status_indicator === 'BERESIKO') indicator.classList.add('text-orange-500');
-            else if (data.status_indicator === 'FAILURE') indicator.classList.add('text-red-500', 'animate-pulse');
-            else indicator.classList.add('text-gray-500');
-
-            // Logika State Machine untuk Tampilan
             const state = data.reactor_state;
-            if(state === 'COLD_SHUTDOWN') {
-                ui.panels.startupButtonContainer.classList.remove('hidden');
-                ui.panels.procedureFlow.classList.add('hidden');
-            } else {
-                ui.panels.startupButtonContainer.classList.add('hidden');
-                ui.panels.procedureFlow.classList.remove('hidden');
-            }
-
-            // Saklar
-            ui.switches.fuel.checked = data.uranium_kg > 0;
-            ui.switches.fuel.disabled = true;
-            ui.switches.coolant.checked = data.is_coolant_system_ok;
-            ui.switches.coolant.disabled = state !== 'PRE_STARTUP' || ui.switches.coolant.checked;
-            ui.switches.neutron.checked = data.is_neutron_source_inserted;
-            ui.switches.neutron.disabled = state !== 'PRE_STARTUP' || !ui.switches.coolant.checked || ui.switches.neutron.checked;
-
-            // Konektor
-            ui.connectors.c1.style.backgroundColor = ui.switches.coolant.checked ? '#22C55E' : '#374151';
-            ui.connectors.c2.style.backgroundColor = ui.switches.neutron.checked ? '#22C55E' : '#374151';
-
-            // Panel Kontrol Manual
-            const showManualControl = ['SUBCRITICAL', 'CRITICAL', 'POWER_UP', 'OPERATIONAL'].includes(state);
-            if (showManualControl) ui.panels.manualControl.classList.remove('hidden');
-            else ui.panels.manualControl.classList.add('hidden');
             
-            ui.controls.rodSlider.disabled = !showManualControl;
-            ui.buttons.shutdown.disabled = !showManualControl;
+            ui.buttons.startup.disabled = state !== 'OFFLINE';
+            ui.buttons.startup.className = state === 'OFFLINE' ? 'text-xl font-bold py-3 px-8 rounded-lg bg-green-600 text-white blinking-startup' : 'text-xl font-bold py-3 px-8 rounded-lg bg-gray-700 text-gray-500 cursor-not-allowed';
+            const isOnline = ['MANUAL_CONTROL', 'OPERATIONAL', 'FAILURE'].includes(state);
+            ui.buttons.shutdown.disabled = !isOnline;
+            ui.buttons.shutdown.className = ui.buttons.shutdown.disabled ? 'text-xl font-bold py-3 px-8 rounded-lg bg-gray-700 text-gray-500 cursor-not-allowed' : 'text-xl font-bold py-3 px-8 rounded-lg bg-red-600 text-white glowing-shutdown';
+
+            ui.indicator.innerText = data.status_indicator || state;
+            ui.indicator.classList.remove('text-green-400', 'text-yellow-400', 'text-orange-500', 'text-red-500', 'text-gray-500');
+            if (data.status_indicator === 'AMAN') ui.indicator.classList.add('text-green-400');
+            else if (data.status_indicator === 'RENTAN') ui.indicator.classList.add('text-yellow-400');
+            else if (data.status_indicator === 'BERESIKO') ui.indicator.classList.add('text-orange-500');
+            else if (data.status_indicator === 'FAILURE') ui.indicator.classList.add('text-red-500', 'animate-pulse');
+            else ui.indicator.classList.add('text-gray-500');
+
+            ui.switches.coolant.disabled = state !== 'AWAITING_COOLANT';
+            ui.switches.coolant.checked = data.coolant_on;
+            ui.blocks.b1_progress.style.width = data.coolant_on ? '100%' : '0%';
+            ui.blocks.b1_indicator.className = data.coolant_on ? 'w-4 h-4 rounded-full bg-green-500' : 'w-4 h-4 rounded-full bg-gray-600';
+            
+            ui.connectors.c1.style.backgroundColor = data.coolant_on ? '#2563EB' : '#374151';
+            ui.switches.rods.disabled = state !== 'AWAITING_RODS';
+            ui.switches.rods.checked = data.rods_inserted;
+            ui.blocks.b2_progress.style.width = data.rods_inserted ? '100%' : '0%';
+            ui.blocks.b2_indicator.className = data.rods_inserted ? 'w-4 h-4 rounded-full bg-green-500' : 'w-4 h-4 rounded-full bg-gray-600';
+            
+            ui.connectors.c2.style.backgroundColor = data.rods_inserted ? '#2563EB' : '#374151';
+            ui.switches.initiator.disabled = state !== 'AWAITING_INITIATOR';
+            ui.switches.initiator.checked = data.initiator_on;
+            ui.blocks.b3_progress.style.width = data.initiator_on ? '100%' : '0%';
+            ui.blocks.b3_indicator.className = data.initiator_on ? 'w-4 h-4 rounded-full bg-green-500' : 'w-4 h-4 rounded-full bg-gray-600';
+
+            const showMainControl = ['MANUAL_CONTROL', 'OPERATIONAL', 'SHUTDOWN', 'FAILURE'].includes(state);
+            ui.mainControl.panel.style.display = showMainControl ? 'grid' : 'none';
+            ui.mainControl.slider.disabled = !showMainControl;
+            if (document.activeElement !== ui.mainControl.slider) {
+                ui.mainControl.slider.value = data.rod_position;
+                ui.mainControl.sliderValue.innerText = data.rod_position.toFixed(2);
+            }
+            ui.mainControl.reactivity.innerText = data.reactivity_k.toFixed(4);
         }
 
         // --- Loop Utama ---
@@ -239,6 +144,7 @@
 
         setInterval(mainLoop, 1000);
         mainLoop();
+    });
     </script>
 </body>
 </html>
